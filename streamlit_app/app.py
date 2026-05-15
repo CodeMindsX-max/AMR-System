@@ -1,15 +1,3 @@
-"""
-streamlit_app/app.py  — v4 (all bugs fixed)
-=============================================
-FIXES APPLIED:
-  1. Tab & radio CSS — proper Streamlit selectors + pill-style tabs
-  2. Cleaned data TABLE added to Cleaned Data tab
-  3. st.caption() description added under every single chart
-  4. Accuracy explanation section in Evaluation page
-  5. Live Prediction fully rebuilt with session_state presets + checkbox toggles
-  6. Notebook section with working download button
-"""
-
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
@@ -21,6 +9,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
+import shap as shap_lib
 
 from config import DataPaths, BioSettings, ShapConfig
 from controllers.data_controller  import DataController
@@ -400,7 +389,7 @@ if "Overview" in PAGE:
 
     with right:
         st.markdown("<div class='sh'>Class Distribution</div>", unsafe_allow_html=True)
-        st.plotly_chart(plot_class_distribution(y_all), use_container_width=True)
+        st.plotly_chart(plot_class_distribution(y_all), width='stretch')
         chart_caption(
             "Donut chart showing the proportion of Resistant vs Susceptible isolates "
             f"in our dataset. {bal['resistant_pct']:.1f}% are Resistant — typical for "
@@ -453,7 +442,7 @@ elif "Dataset" in PAGE:
             "and the Resistant Phenotype label (may be blank for MIC-only rows)."
         )
         if not amr_raw.empty:
-            st.dataframe(amr_raw, use_container_width=True, hide_index=True)
+            st.dataframe(amr_raw, width='stretch', hide_index=True)
             st.info(f"Showing first {min(50, len(amr_raw))} rows · "
                     f"{amr_raw.shape[1]} columns in original file")
         else:
@@ -469,7 +458,7 @@ elif "Dataset" in PAGE:
             "This long-format table gets pivoted into a genome × gene matrix."
         )
         if not sp_raw.empty:
-            st.dataframe(sp_raw, use_container_width=True, hide_index=True)
+            st.dataframe(sp_raw, width='stretch', hide_index=True)
             st.info(f"Showing first {min(50, len(sp_raw))} rows · "
                     f"{sp_raw.shape[1]} columns in original file")
         else:
@@ -490,7 +479,7 @@ elif "Dataset" in PAGE:
         clean_preview = df[["genome_id","genome_name"] + features + ["resistance"]].head(n_show).copy()
         clean_preview["resistance"] = clean_preview["resistance"].map(
             {0:"✅ Susceptible", 1:"🔴 Resistant"})
-        st.dataframe(clean_preview, use_container_width=True, hide_index=True)
+        st.dataframe(clean_preview, width='stretch', hide_index=True)
 
         st.markdown(
             f"<div class='card card-g'>"
@@ -585,20 +574,20 @@ elif "Dataset" in PAGE:
             stats.style
             .background_gradient(subset=["Difference"], cmap="RdYlGn")
             .format("{:.3f}"),
-            use_container_width=True,
+            width='stretch',
         )
 
     # ── TAB 4: Gene Distribution ─────────────────────────────────────────────
     with t_eda:
         top_n = st.slider("Genes shown:", 5, min(50,len(features)),
                           min(25,len(features)), key="eda_topn")
-        st.plotly_chart(plot_gene_prevalence(df, features, top_n), use_container_width=True)
+        st.plotly_chart(plot_gene_prevalence(df, features, top_n), width='stretch')
         chart_caption(
             "Grouped bar chart comparing how often each gene appears in Resistant (red) "
             "vs Susceptible (green) genomes. Genes with a large gap between the two bars "
             "are the most predictive features for the ML model."
         )
-        st.plotly_chart(plot_class_distribution(y_all), use_container_width=True)
+        st.plotly_chart(plot_class_distribution(y_all), width='stretch')
         chart_caption(
             "Overall class balance. A >60% resistant proportion is common in AMR databases "
             "because resistant strains are more likely to be sequenced clinically. "
@@ -638,7 +627,7 @@ elif "Preprocessing" in PAGE:
     t1,t2,t3,t4 = st.tabs(["⚖️ SMOTE Balance","🔮 PCA Scatter","📈 Explained Variance","🏆 Chi² Ranking"])
 
     with t1:
-        st.plotly_chart(plot_smote_balance(y_tr, y_bal), use_container_width=True)
+        st.plotly_chart(plot_smote_balance(y_tr, y_bal), width='stretch')
         chart_caption(
             "SMOTE (Synthetic Minority Over-sampling Technique) creates synthetic samples "
             "for the minority class in the TRAINING set only — the test set is never touched. "
@@ -647,7 +636,7 @@ elif "Preprocessing" in PAGE:
         )
 
     with t2:
-        st.plotly_chart(plot_pca_scatter(X_all, y_all), use_container_width=True)
+        st.plotly_chart(plot_pca_scatter(X_all, y_all), width='stretch')
         chart_caption(
             "PCA compresses all gene features into 2 dimensions for visualisation. "
             "Good separation between red (Resistant) and green (Susceptible) clusters "
@@ -656,7 +645,7 @@ elif "Preprocessing" in PAGE:
         )
 
     with t3:
-        st.plotly_chart(plot_cumulative_variance(X_all), use_container_width=True)
+        st.plotly_chart(plot_cumulative_variance(X_all), width='stretch')
         chart_caption(
             "How many PCA components are needed to capture most of the variance. "
             "The 80% threshold line shows the minimum components for a compact representation. "
@@ -666,7 +655,7 @@ elif "Preprocessing" in PAGE:
     with t4:
         chi2_df = dc.get_chi2_ranking()
         top_chi = st.slider("Top N genes:", 5, len(features), min(25, len(features)), key="chi2n")
-        st.plotly_chart(plot_chi2_ranking(chi2_df, top_chi), use_container_width=True)
+        st.plotly_chart(plot_chi2_ranking(chi2_df, top_chi), width='stretch')
         chart_caption(
             "Chi-squared test measures how statistically dependent each gene is on the "
             "resistance label. Higher score = gene distribution differs significantly "
@@ -698,7 +687,7 @@ elif "Training" in PAGE:
     st.markdown("<div class='sh'>🔄 5-Fold Stratified Cross-Validation</div>",
                 unsafe_allow_html=True)
     cv_df = tc.cv_summary_df()
-    st.plotly_chart(plot_cv_box(cv_df), use_container_width=True)
+    st.plotly_chart(plot_cv_box(cv_df), width='stretch')
     chart_caption(
         "Box plot of AUC-ROC across 5 stratified folds for each model. "
         "Wider boxes = higher variance = less stable model. "
@@ -709,7 +698,7 @@ elif "Training" in PAGE:
     cv_summary = cv_df.groupby("Model")["AUC_ROC"].agg(
         Mean_AUC="mean", Std_Dev="std").sort_values("Mean_AUC", ascending=False)
     st.dataframe(cv_summary.style.format("{:.4f}").highlight_max(color="#1a3a2a"),
-                 use_container_width=True)
+                 width='stretch')
     chart_caption(
         "Mean CV AUC summarises each model's generalisation ability. "
         "Lower Std_Dev means more consistent performance across different data splits."
@@ -738,7 +727,7 @@ elif "Evaluation" in PAGE:
     ])
 
     with t1:
-        st.plotly_chart(plot_roc_curves(ec.results, y_te), use_container_width=True)
+        st.plotly_chart(plot_roc_curves(ec.results, y_te), width='stretch')
         chart_caption(
             "ROC curve plots True Positive Rate (sensitivity) vs False Positive Rate "
             "for each probability threshold. AUC-ROC near 1.0 = excellent discrimination. "
@@ -747,7 +736,7 @@ elif "Evaluation" in PAGE:
         )
 
     with t2:
-        st.plotly_chart(plot_pr_curves(ec.results), use_container_width=True)
+        st.plotly_chart(plot_pr_curves(ec.results), width='stretch')
         chart_caption(
             "Precision-Recall curves are more informative than ROC when classes are imbalanced. "
             "Average Precision (AP) summarises the area under this curve. "
@@ -767,7 +756,7 @@ elif "Evaluation" in PAGE:
         )
 
     with t4:
-        st.plotly_chart(plot_radar_chart(mdf), use_container_width=True)
+        st.plotly_chart(plot_radar_chart(mdf), width='stretch')
         chart_caption(
             "Radar chart overlays all 6 metrics for all 4 models simultaneously. "
             "A larger filled area = better overall performance. "
@@ -777,7 +766,7 @@ elif "Evaluation" in PAGE:
 
     with t5:
         m_sel = st.selectbox("Select model:", ["XGBoost","Random Forest","Gradient Boosting"])
-        st.plotly_chart(plot_feature_importance(tc.models[m_sel], features), use_container_width=True)
+        st.plotly_chart(plot_feature_importance(tc.models[m_sel], features), width='stretch')
         chart_caption(
             f"Top genes ranked by {m_sel}'s internal 'Gain' metric — how much each gene "
             "reduces uncertainty when it's used as a decision split. "
@@ -788,7 +777,7 @@ elif "Evaluation" in PAGE:
     st.markdown("<div class='sh'>📊 Full Metrics Table</div>", unsafe_allow_html=True)
     st.dataframe(
         mdf.style.highlight_max(axis=0, color="#1a3a2a").format("{:.4f}"),
-        use_container_width=True,
+        width='stretch',
     )
     chart_caption(
         "Green highlight = best value for that column. "
@@ -879,7 +868,7 @@ elif "SHAP" in PAGE:
     t1,t2,t3 = st.tabs(["🌐 Global Importance","🐝 Beeswarm Plot","🔍 Per-Sample Explanation"])
 
     with t1:
-        st.plotly_chart(sa.global_importance(), use_container_width=True)
+        st.plotly_chart(sa.global_importance(), width='stretch')
         chart_caption(
             "Mean |SHAP Value| across all test samples. Higher = gene has larger average "
             "effect on the model's output. This is the model-agnostic equivalent of "
@@ -913,7 +902,7 @@ elif "SHAP" in PAGE:
         c4.metric("Result",  "✅ Correct" if pred==actual else "❌ Incorrect")
 
         st.plotly_chart(sa.resistance_gauge(tc.models["XGBoost"], X_te[idx]),
-                        use_container_width=True)
+                        width='stretch')
         chart_caption(
             "Resistance probability gauge for this specific genome. "
             f"The needle sits at {prob*100:.1f}% — "
@@ -921,7 +910,7 @@ elif "SHAP" in PAGE:
             "In clinical use, the threshold could be tuned to prioritise sensitivity."
         )
 
-        st.plotly_chart(sa.waterfall(idx), use_container_width=True)
+        st.plotly_chart(sa.waterfall(idx), width='stretch')
         chart_caption(
             "Waterfall chart showing how each gene shifts the probability from the "
             "base value (average prediction across all samples) to the final prediction. "
@@ -929,7 +918,7 @@ elif "SHAP" in PAGE:
             "This is the explanation your teacher can ask you to interpret in the viva."
         )
 
-        st.plotly_chart(sa.sample_attribution_bar(idx), use_container_width=True)
+        st.plotly_chart(sa.sample_attribution_bar(idx), width='stretch')
         chart_caption(
             "Horizontal bar version of the same attribution — easier to compare gene magnitudes. "
             "The gene with the longest bar had the largest single influence on this prediction."
@@ -971,7 +960,7 @@ elif "Literature" in PAGE:
             "Our contribution — interpretable gene P/A model",
         ],
     })
-    st.dataframe(lit_df, use_container_width=True, hide_index=True)
+    st.dataframe(lit_df, width='stretch', hide_index=True)
     chart_caption(
         "Direct comparison with papers reviewed in Assignment 2. "
         "Our lower accuracy is expected given the smaller dataset (download limit). "
@@ -993,7 +982,7 @@ elif "Literature" in PAGE:
                        annotation_text="← Our Work", annotation_position="top right")
     fig_lit.update_layout(**DARK_LAYOUT, height=440, yaxis_range=[0.50,1.03],
                            title="Multi-Metric Literature Benchmark")
-    st.plotly_chart(fig_lit, use_container_width=True)
+    st.plotly_chart(fig_lit, width='stretch')
     chart_caption(
         "Line chart benchmarking our results against literature. "
         "The red shaded region highlights our project. "
@@ -1118,21 +1107,21 @@ elif "Prediction" in PAGE:
     # ── Preset buttons ────────────────────────────────────────────────────────
     pb1, pb2, pb3, pb4 = st.columns(4)
 
-    if pb1.button("🔴 Classic CRAB Profile", use_container_width=True):
+    if pb1.button("🔴 Classic CRAB Profile", width='stretch'):
         _apply_vec(resistant_vec, "resistant")
         st.rerun()
 
-    if pb2.button("🟢 Susceptible Profile", use_container_width=True):
+    if pb2.button("🟢 Susceptible Profile", width='stretch'):
         _apply_vec(susceptible_vec, "susceptible")
         st.rerun()
 
-    if pb3.button("🎲 Random from Test Set", use_container_width=True):
+    if pb3.button("🎲 Random from Test Set", width='stretch'):
         ridx = int(np.random.randint(0, len(X_te)))
         st.session_state["rand_idx"] = ridx
         _apply_vec(X_te[ridx], "random")
         st.rerun()
 
-    if pb4.button("🔄 Reset All to Zero", use_container_width=True):
+    if pb4.button("🔄 Reset All to Zero", width='stretch'):
         _apply_vec(np.zeros(len(features)), "custom")
         st.rerun()
 
@@ -1210,7 +1199,7 @@ elif "Prediction" in PAGE:
         # Gauge
         st.plotly_chart(
             sa.resistance_gauge(tc.models["XGBoost"], result_vec),
-            use_container_width=True,
+            width='stretch',
         )
         chart_caption(
             f"Resistance probability = {prob*100:.1f}%. "
@@ -1246,7 +1235,7 @@ elif "Prediction" in PAGE:
             xaxis_title="Gene", yaxis_title="SHAP Contribution",
             xaxis={"tickangle": -35},
         )
-        st.plotly_chart(fig_att, use_container_width=True)
+        st.plotly_chart(fig_att, width='stretch')
         chart_caption(
             "Red bars = this gene pushes the prediction toward Resistant. "
             "Green bars = this gene reduces resistance probability. "

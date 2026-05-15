@@ -1,15 +1,3 @@
-"""
-views/plots.py
-================
-ALL visualisation functions.
-Every function accepts raw data / controller outputs and returns a figure.
-Nothing is trained or computed here — pure rendering.
-
-Convention:
-  plotly functions return go.Figure (for Streamlit / notebook widgets)
-  matplotlib functions return (fig, axes) (for Jupyter inline display)
-"""
-
 import numpy as np
 import pandas as pd
 import plotly.express as px

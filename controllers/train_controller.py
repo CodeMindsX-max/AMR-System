@@ -1,10 +1,3 @@
-"""
-controllers/train_controller.py
-=================================
-Orchestrates model training and cross-validation.
-Keeps all training logic OUT of the view layer.
-"""
-
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold, cross_val_score

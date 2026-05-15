@@ -1,10 +1,3 @@
-"""
-controllers/eval_controller.py
-================================
-Computes all evaluation metrics for every model.
-Pure computation — no plotting happens here (that's in views/).
-"""
-
 import numpy as np
 import pandas as pd
 from sklearn.metrics import (

@@ -1,33 +1,3 @@
-"""
-notebooks/generate_notebook.py  (v3 — load-once architecture)
-==============================================================
-Run from PROJECT ROOT:
-    python notebooks/generate_notebook.py
-
-Creates: notebooks/AMR_ML_Project.ipynb
-
-KEY FIX vs v2:
-  v2 recreated DataController + TrainController in EVERY cell
-  → 22 code cells × 4 models = ~88 training loops on Run All
-  → Painfully slow, especially during a live viva demo
-
-  v3 loads data and trains models ONCE in Cell 0 (Setup).
-  All subsequent cells simply USE the global variables:
-    dc, X_all, y_all, features, df   ← from DataController
-    X_tr, X_te, y_tr, y_te, X_bal, y_bal
-    tc                                ← TrainController (4 trained models)
-    ec                                ← EvalController (all metrics)
-    sa                                ← SHAPAnalyser (SHAP values)
-
-  This is correct Jupyter usage — variables live in the kernel namespace
-  and are shared across all cells automatically.
-
-__init__.py NOTE:
-  The screenshot confirms __init__.py files exist in all package dirs.
-  The sys.path.insert(0, root) in Cell 0 is still kept as a safety net
-  for edge cases where the kernel CWD differs from the project root.
-"""
-
 import json
 from pathlib import Path
 

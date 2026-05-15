@@ -1,10 +1,3 @@
-"""
-config.py — Central Configuration
-===================================
-All paths, hyperparameters, and constants live here.
-Change ONE value → everything updates across the entire project.
-"""
-
 from pathlib import Path
 
 # ─────────────────────────────────────────────

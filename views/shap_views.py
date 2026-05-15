@@ -1,10 +1,3 @@
-"""
-views/shap_views.py
-=====================
-All SHAP-related visualisations.
-Separated from plots.py because SHAP has its own rendering logic.
-"""
-
 import numpy as np
 import pandas as pd
 import matplotlib

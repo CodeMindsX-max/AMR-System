@@ -1,25 +1,3 @@
-"""
-controllers/data_controller.py  (v3 — MIC recovery + adaptive thresholds)
-==========================================================================
-ROOT CAUSE OF "9,146 DROPPED ROWS":
-  BV-BRC stores resistance in TWO ways:
-    (a) "Resistant Phenotype" column  → direct label "Resistant"/"Susceptible"
-    (b) "Measurement Value" column    → raw MIC number  e.g. 16.0 mg/L
-  Many rows have a MIC value but a blank Phenotype label.
-
-FIX: _encode_row() tries the phenotype label first.
-  If blank/NaN it reads the MIC number and applies CLSI M100 breakpoints:
-    Meropenem vs A. baumannii (CLSI M100-S32 / EUCAST 2023)
-      Resistant   : MIC ≥ 8  mg/L
-      Susceptible : MIC ≤ 2  mg/L   (Intermediate 4 mg/L → Susceptible)
-  This recovers thousands of rows that were previously dropped.
-
-ALSO FIXED:
-  - Adaptive gene prevalence threshold (auto-relaxes for small datasets)
-  - Broader property filter for sp_genes.csv
-  - Clear per-step counts printed at every stage
-"""
-
 import numpy as np
 import pandas as pd
 import re

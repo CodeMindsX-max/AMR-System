@@ -1,14 +1,3 @@
-"""
-main.py — CLI Entry Point
-==========================
-Run the full ML pipeline from the command line, or just download data.
-
-Usage:
-    python main.py pipeline     # run full ML pipeline (prints metrics)
-    python main.py download     # download BV-BRC CSVs automatically
-    python main.py streamlit    # launch Streamlit dashboard
-"""
-
 import sys
 import argparse
 
