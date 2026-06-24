@@ -6,7 +6,7 @@ def run_pipeline():
     """Execute the complete ML pipeline end-to-end."""
     print("=" * 60)
     print("  AMR Prediction — A. baumannii / Meropenem")
-    print("  COMSATS University Islamabad | ALC 354")
+    print("  Meropenem Resistance Prediction Pipeline")
     print("=" * 60)
 
     # ── 1. DATA ──────────────────────────────────────────────
@@ -75,7 +75,7 @@ def download_data():
 
     headers = {
         "Accept": "text/csv",
-        "User-Agent": "AMR-ML-Project/1.0 (student research; COMSATS University)",
+        "User-Agent": "AMR-ML-Project/1.0 (research)",
     }
 
     for name, url, path in downloads:
@@ -110,7 +110,7 @@ def launch_streamlit():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="AMR ML Project — ALC 354")
+    parser = argparse.ArgumentParser(description="AMR ML Project — Meropenem resistance prediction")
     parser.add_argument("command", choices=["pipeline", "download", "streamlit"],
                          nargs="?", default="pipeline")
     args = parser.parse_args()

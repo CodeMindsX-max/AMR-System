@@ -19,17 +19,14 @@
 
 <!-- BADGES ROW 3 -->
 [![BV-BRC](https://img.shields.io/badge/Dataset-BV--BRC%20Real%20Data-ef5350?style=for-the-badge&logo=database&logoColor=white)](https://www.bv-brc.org/view/Taxonomy/470)
-[![GitHub Repo](https://img.shields.io/badge/GitHub-ML__AMR__Project-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/AbdulRaffayQureshi/ML_AMR_Project)
-[![COMSATS](https://img.shields.io/badge/COMSATS-University%20Islamabad-42a5f5?style=for-the-badge&logo=university&logoColor=white)](https://comsats.edu.pk)
-[![Course](https://img.shields.io/badge/Course-ALC%20354%20ML%20Fundamentals-ab47bc?style=for-the-badge&logo=bookstack&logoColor=white)](#-team)
 
 <br/>
 
-> ### 🎓 Bioinformatics × Machine Learning — Lab Terminal Project
-> Our major is **Bioinformatics (BSI)**. This project solves a real clinical problem from computational biology:  
+> ### 🎓 Bioinformatics × Machine Learning
+> This project solves a real clinical problem from computational biology:  
 > predicting which bacteria will resist antibiotics — directly from their **DNA sequence** — before any lab test is run.  
-> We selected *Acinetobacter baumannii* + Meropenem resistance as our problem, reviewed **4 published papers**,  
-> sourced a **real genomic database (BV-BRC)**, and applied **XGBoost + SHAP** to predict and explain resistance.
+> It targets *Acinetobacter baumannii* + Meropenem resistance, reviews **4 published papers**,  
+> sources a **real genomic database (BV-BRC)**, and applies **XGBoost + SHAP** to predict and explain resistance.
 
 <br/>
 
@@ -42,8 +39,7 @@
 **[📊 Data](#-data-sources)** &nbsp;·&nbsp;
 **[⚡ Setup](#-installation--setup)** &nbsp;·&nbsp;
 **[📓 Jupyter](#-jupyter-notebook-setup)** &nbsp;·&nbsp;
-**[📈 Results](#-results)** &nbsp;·&nbsp;
-**[👥 Team](#-team)**
+**[📈 Results](#-results)**
 
 ---
 
@@ -62,16 +58,16 @@ Carbapenem-resistant strains **(CRAB)** carry **ICU mortality rates up to 60%**.
 
 Traditional Antibiotic Susceptibility Testing (AST) takes **24–72 hours**, forcing clinicians to prescribe broad-spectrum antibiotics empirically — directly accelerating resistance evolution.
 
-### 🤖 Our ML Solution
-We built an end-to-end ML pipeline using **XGBoost** on a binary gene presence/absence matrix extracted from **Whole-Genome Sequencing** data. **SHAP** explanations identify the exact resistance genes driving each prediction — making the model clinically interpretable and ready for viva discussion.
+### 🤖 ML Solution
+An end-to-end ML pipeline using **XGBoost** on a binary gene presence/absence matrix extracted from **Whole-Genome Sequencing** data. **SHAP** explanations identify the exact resistance genes driving each prediction — making the model clinically interpretable.
 
-### 🎓 Academic Context
-This is our **Lab Terminal Project** for *Machine Learning Fundamentals (ALC 354)* — a core course in our **BSI (Bioinformatics) degree** at COMSATS University Islamabad. The project follows the full ML research pipeline: problem selection → literature review → real dataset → model implementation → evaluation → SHAP explainability.
+### 🎓 Project Scope
+The project follows the full ML research pipeline: problem selection → literature review → real dataset → model implementation → evaluation → SHAP explainability.
 
 </td>
 <td width="45%" align="center">
 
-### 📊 Live Metrics *(from our local run)*
+### 📊 Live Metrics *(from a local run)*
 
 | Metric | Value |
 |--------|-------|
@@ -99,7 +95,7 @@ This is our **Lab Terminal Project** for *Machine Learning Fundamentals (ALC 354
 
 ## 🖼️ Project Screenshots
 
-> These are **real screenshots** from our running Streamlit dashboard on localhost.
+> These are **real screenshots** from a running Streamlit dashboard on localhost.
 
 ### Overview Page — Clinical Context + Class Distribution
 
@@ -315,12 +311,12 @@ Thumbs.db
 3. Click **Download → CSV** → save as `data/raw/sp_genes.csv`
 
 > **Note:** BV-BRC limits browser downloads to 10,000 rows (AMR) and 1,000 rows (genes).  
-> This is why we have 12 features instead of 50+ — a known constraint, not a pipeline flaw.  
-> See [Why is accuracy lower?](#-why-is-our-accuracy-lower-than-literature) for the full explanation.
+> This is why the pipeline retains 12 features instead of 50+ — a known constraint, not a pipeline flaw.  
+> See [Why is accuracy lower?](#-why-is-accuracy-lower-than-literature) for the full explanation.
 
-### 🔄 MIC Fallback Encoding *(our key innovation)*
+### 🔄 MIC Fallback Encoding
 
-Many BV-BRC rows have a raw MIC number but **no text phenotype label**. Standard pipelines discard these — we recover them using **CLSI M100 breakpoints**:
+Many BV-BRC rows have a raw MIC number but **no text phenotype label**. Standard pipelines discard these — this project recovers them using **CLSI M100 breakpoints**:
 
 ```
 Meropenem vs A. baumannii (CLSI M100-S32 / EUCAST 2023):
@@ -348,7 +344,7 @@ This recovered **thousands of rows** that would otherwise be wasted.
 ### Step 1 — Clone the Repository
 
 ```bash
-git clone https://github.com/AbdulRaffayQureshi/ML_AMR_Project.git
+git clone <repository-url>
 cd ML_AMR_Project
 ```
 
@@ -432,13 +428,13 @@ data/
 python main.py pipeline
 ```
 
-**Option B — Streamlit Dashboard** *(best for presentation & viva)*
+**Option B — Streamlit Dashboard** *(interactive exploration)*
 ```bash
 streamlit run streamlit_app/app.py
 ```
 Open **[http://localhost:8501](http://localhost:8501)** in your browser.
 
-**Option C — Jupyter Notebook** *(phase-by-phase, best for showing teacher)*
+**Option C — Jupyter Notebook** *(phase-by-phase walkthrough)*
 ```bash
 python notebooks/generate_notebook.py
 # → generates notebooks/AMR_ML_Project.ipynb
@@ -448,7 +444,7 @@ python notebooks/generate_notebook.py
 
 ## 📓 Jupyter Notebook Setup
 
-The notebook covers every project phase with **self-contained cells** — perfect for running cell-by-cell in front of your teacher.
+The notebook covers every project phase with **self-contained cells** — run all at once or one by one.
 
 ### Generate the Notebook
 
@@ -514,7 +510,7 @@ jupyter lab notebooks/AMR_ML_Project.ipynb
 
 ## 📈 Results
 
-### 🔢 Our Actual Metrics *(from running on real BV-BRC data)*
+### 🔢 Metrics *(from running on real BV-BRC data)*
 
 | Model | AUC-ROC | Accuracy | F1-Score | Sensitivity | Specificity | Avg Precision |
 |-------|---------|----------|----------|-------------|-------------|---------------|
@@ -527,18 +523,18 @@ jupyter lab notebooks/AMR_ML_Project.ipynb
 
 ---
 
-### ❓ Why is Our Accuracy Lower Than Literature?
+### ❓ Why is Accuracy Lower Than Literature?
 
-This is the most important thing to explain to your teacher. The answer is **data quantity**, not methodology.
+The answer is **data quantity**, not methodology.
 
-| Root Cause | Our Project | Published Studies |
+| Root Cause | This Implementation | Published Studies |
 |-----------|-------------|-------------------|
 | **Total genomes** | 1,884 | 1,942 – 2,195 |
 | **Gene features** | **12** ← bottleneck | 50 – 200+ |
 | **sp_genes download cap** | **1,000 rows** | No limit (API) |
 | **Genome overlap** | 480 / 817 (59%) | ~95%+ |
 
-**The bottleneck:** BV-BRC's browser limits `sp_genes.csv` to **1,000 rows**. This means only 480 of our 1,884 labelled genomes have gene data → tiny feature matrix → limited model capacity.
+**The bottleneck:** BV-BRC's browser limits `sp_genes.csv` to **1,000 rows**. This means only 480 of the 1,884 labelled genomes have gene data → tiny feature matrix → limited model capacity.
 
 **What AUC > 0.50 means:** All four models beat random guessing. The model **is** learning real resistance patterns from the DNA data — it just needs more gene coverage to achieve higher accuracy.
 
@@ -551,7 +547,7 @@ This is the most important thing to explain to your teacher. The answer is **dat
 # 2. Increase XGBoost estimators in config.py:
 #    ModelConfig.XGBOOST["n_estimators"] = 500
 
-# 3. For your viva — focus on AUC-ROC, not accuracy:
+# 3. Focus on AUC-ROC, not accuracy:
 #    AUC-ROC is the standard metric in AMR literature (Gao 2024, Wang 2023)
 #    Raw accuracy on imbalanced data can be misleading
 ```
@@ -565,7 +561,7 @@ This is the most important thing to explain to your teacher. The answer is **dat
 | Gao et al. 2024 [1] | 1,942 BV-BRC | XGBoost + RF | 0.980 | **98.36%** |
 | Wang et al. 2023 [2] | 1,784 PATRIC | LASSO | 0.970 | ~94% |
 | Gao et al. 2024 [4] | 2,195 clinical | SHAP-GBM | ~0.950 | ~92% |
-| **This Project** | **1,884 BV-BRC** | **XGBoost + SHAP** | **0.5712** | **54.38%** |
+| **This Implementation** | **1,884 BV-BRC** | **XGBoost + SHAP** | **0.5712** | **54.38%** |
 
 > Gap = download limit (12 genes vs 50–200). Pipeline and methodology are identical to published work.
 
@@ -576,7 +572,7 @@ This is the most important thing to explain to your teacher. The answer is **dat
 <details>
 <summary><b>❌ KeyError: 'antibiotic' when loading CSV</b></summary>
 
-BV-BRC browser exports use Title Case (`"Antibiotic"`) while the code expects snake_case. Our `data_controller.py` auto-renames these. If you still see this error:
+BV-BRC browser exports use Title Case (`"Antibiotic"`) while the code expects snake_case. `data_controller.py` auto-renames these. If you still see this error:
 
 1. Open your CSV in Excel/Notepad
 2. Check the exact column name in row 1
@@ -658,32 +654,6 @@ class ModelConfig:
 
 ---
 
-## 👥 Team
-
-<div align="center">
-
-<br/>
-
-| | Name | Student ID | Role |
-|--|------|-----------|------|
-| 👨‍💻 | **Abdul Raffay Qureshi** | SP24-BSI-001 | ML pipeline · XGBoost · SHAP · GitHub |
-| 👩‍💻 | **Andleeb Ijaz** | SP24-BSI-010 | Data preprocessing · literature review · evaluation |
-| 👨‍💻 | **Saad Hassnain** | SP24-BSI-052 | Streamlit dashboard · visualisations · Jupyter |
-
-<br/>
-
-| | |
-|---|---|
-| **Instructor** | Dr. Atif Shakeel |
-| **Course** | Machine Learning Fundamentals (ALC 354) |
-| **Class** | BSI 5A |
-| **Institution** | COMSATS University Islamabad |
-| **Submission** | Lab Terminal Project 2026 |
-
-</div>
-
----
-
 ## 📚 References
 
 > Papers identified via PubMed & Google Scholar.
@@ -702,35 +672,21 @@ class ModelConfig:
 
 ---
 
-## 🌟 Star History
-
-<div align="center">
-
-[![Star History Chart](https://api.star-history.com/svg?repos=AbdulRaffayQureshi/ML_AMR_Project&type=Date)](https://star-history.com/#AbdulRaffayQureshi/ML_AMR_Project&Date)
-
-*If this project helped you, please give it a ⭐ — it helps others find it!*
-
-</div>
-
----
-
 ## 🙏 Acknowledgements
 
 - **BV-BRC** (bv-brc.org) for providing free open-access bacterial genomic data
 - **CARD** (Comprehensive Antibiotic Resistance Database) for AMR gene reference data
 - **CLSI / EUCAST** for published antimicrobial breakpoint standards
-- **Dr. Atif Shakeel** for course guidance and project supervision
 - Open-source community behind XGBoost, SHAP, Streamlit, and scikit-learn
 
 ---
 
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0097a7,50:0288d1,100:0a1628&height=130&section=footer&text=ALC%20354%20·%20BSI%205A%20·%20COMSATS%20University%20Islamabad%20·%202026&fontSize=13&fontColor=90caf9&fontAlignY=68&animation=fadeIn" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0097a7,50:0288d1,100:0a1628&height=130&section=footer&text=AMR%20Predictor%20·%20Machine%20Learning%20Pipeline&fontSize=13&fontColor=90caf9&fontAlignY=68&animation=fadeIn" width="100%"/>
 
-**Built with 🧬 for Machine Learning Fundamentals — ALC 354**
+**Built with 🧬 for antimicrobial resistance prediction research**
 
-[![GitHub](https://img.shields.io/badge/View%20on-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/AbdulRaffayQureshi/ML_AMR_Project)
 [![BV-BRC](https://img.shields.io/badge/Data-BV--BRC%20Database-0097a7?style=for-the-badge&logo=database&logoColor=white)](https://www.bv-brc.org/view/Taxonomy/470)
 
 </div>

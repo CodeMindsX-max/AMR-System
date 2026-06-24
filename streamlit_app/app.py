@@ -325,12 +325,6 @@ with st.sidebar:
                     letter-spacing:.5px;margin:6px 0 2px;'>Best AUC-ROC</div>
         <span style='color:#4fc3f7;font-family:Space Mono,monospace;
                      font-size:1rem;font-weight:700;'>{best_auc:.4f}</span><br>
-        <div style='color:#78909c;font-size:.68rem;text-transform:uppercase;
-                    letter-spacing:.5px;margin:6px 0 2px;'>Team</div>
-        <span style='color:#90caf9;'>Abdul Raffay · Andleeb · Saad</span><br>
-        <div style='color:#78909c;font-size:.68rem;text-transform:uppercase;
-                    letter-spacing:.5px;margin:6px 0 2px;'>Course</div>
-        <span style='color:#90caf9;'>ALC 354 · Dr. Atif Shakeel<br>COMSATS University</span>
     </div>""", unsafe_allow_html=True)
 
 
@@ -392,7 +386,7 @@ if "Overview" in PAGE:
         st.plotly_chart(plot_class_distribution(y_all), width='stretch')
         chart_caption(
             "Donut chart showing the proportion of Resistant vs Susceptible isolates "
-            f"in our dataset. {bal['resistant_pct']:.1f}% are Resistant — typical for "
+            f"in the dataset. {bal['resistant_pct']:.1f}% are Resistant — typical for "
             "AMR database collections which are enriched for resistant clinical isolates."
         )
 
@@ -649,7 +643,7 @@ elif "Preprocessing" in PAGE:
         chart_caption(
             "How many PCA components are needed to capture most of the variance. "
             "The 80% threshold line shows the minimum components for a compact representation. "
-            "We use ALL features in the final model to avoid discarding rare resistance signals."
+            "All features are used in the final model to avoid discarding rare resistance signals."
         )
 
     with t4:
@@ -732,7 +726,7 @@ elif "Evaluation" in PAGE:
             "ROC curve plots True Positive Rate (sensitivity) vs False Positive Rate "
             "for each probability threshold. AUC-ROC near 1.0 = excellent discrimination. "
             "The dotted diagonal = random guessing (AUC=0.50). "
-            "For AMR clinical use, we prioritise high sensitivity (catching all resistant strains)."
+            "For AMR clinical use, high sensitivity is prioritised (catching all resistant strains)."
         )
 
     with t2:
@@ -842,10 +836,9 @@ elif "Evaluation" in PAGE:
                 unsafe_allow_html=True,
             )
         st.info(
-            "💡 **For your viva:** Tell your teacher that the lower accuracy is a direct "
-            "consequence of the BV-BRC 1,000-row download limit on sp_genes.csv, "
-            "not a flaw in the ML approach. The AUC-ROC is more meaningful than raw accuracy "
-            "for imbalanced datasets — focus the discussion on AUC-ROC."
+            "💡 **Note:** Lower accuracy is a direct consequence of the BV-BRC 1,000-row "
+            "download limit on sp_genes.csv, not a flaw in the ML approach. AUC-ROC is more "
+            "meaningful than raw accuracy for imbalanced datasets."
         )
 
 
@@ -915,7 +908,7 @@ elif "SHAP" in PAGE:
             "Waterfall chart showing how each gene shifts the probability from the "
             "base value (average prediction across all samples) to the final prediction. "
             "Red bars push toward Resistant. Green bars push toward Susceptible. "
-            "This is the explanation your teacher can ask you to interpret in the viva."
+            "This breakdown shows how each gene shifts the prediction for a single genome."
         )
 
         st.plotly_chart(sa.sample_attribution_bar(idx), width='stretch')
@@ -931,14 +924,14 @@ elif "SHAP" in PAGE:
 elif "Literature" in PAGE:
     st.markdown("""<div class='hero'>
         <h1>📚 Literature Comparison</h1>
-        <p>Benchmarking our results against 3 published AMR studies (from Assignment 2 proposal)</p>
+        <p>Benchmarking results against 3 published AMR studies</p>
     </div>""", unsafe_allow_html=True)
 
     our_auc = mdf.loc["XGBoost","AUC-ROC"] if "XGBoost" in mdf.index else 0.95
     our_acc = mdf.loc["XGBoost","Accuracy"] if "XGBoost" in mdf.index else 0.90
     our_sen = mdf.loc["XGBoost","Sensitivity"] if "XGBoost" in mdf.index else 0.91
 
-    studies = ["Gao et al. 2024 [1]","Wang et al. 2023 [2]","Gao et al. 2024 [4]","This Project"]
+    studies = ["Gao et al. 2024 [1]","Wang et al. 2023 [2]","Gao et al. 2024 [4]","This Implementation"]
     aucs    = [0.9800, 0.9700, 0.9500, our_auc]
     accs    = [0.9836, 0.9400, 0.9200, our_acc]
     sens    = [0.9700, 0.9500, 0.9100, our_sen]
@@ -957,14 +950,14 @@ elif "Literature" in PAGE:
             "K-mers beat alignment-based, <10 min prediction",
             "20 core genomic signatures for carbapenem resistance",
             "blaOXA mutations outperformed clinical metadata",
-            "Our contribution — interpretable gene P/A model",
+            "Gene presence/absence model with SHAP explainability",
         ],
     })
     st.dataframe(lit_df, width='stretch', hide_index=True)
     chart_caption(
-        "Direct comparison with papers reviewed in Assignment 2. "
-        "Our lower accuracy is expected given the smaller dataset (download limit). "
-        "The AUC-ROC is the most comparable metric across studies."
+        "Direct comparison with published AMR prediction studies. "
+        "Lower accuracy here is expected given the smaller dataset (download limit). "
+        "AUC-ROC is the most comparable metric across studies."
     )
 
     fig_lit = go.Figure()
@@ -979,15 +972,15 @@ elif "Literature" in PAGE:
             marker=dict(size=11, color=col, line=dict(width=2, color="#0d1117")),
         ))
     fig_lit.add_vrect(x0=2.5, x1=3.5, fillcolor="#ef5350", opacity=0.07,
-                       annotation_text="← Our Work", annotation_position="top right")
+                       annotation_text="← This implementation", annotation_position="top right")
     fig_lit.update_layout(**DARK_LAYOUT, height=440, yaxis_range=[0.50,1.03],
                            title="Multi-Metric Literature Benchmark")
     st.plotly_chart(fig_lit, width='stretch')
     chart_caption(
-        "Line chart benchmarking our results against literature. "
-        "The red shaded region highlights our project. "
-        "Gap between our results and published studies is due to dataset size, "
-        "not the ML methodology — our pipeline mirrors the same approach as these papers."
+        "Line chart benchmarking results against literature. "
+        "The highlighted region marks this implementation. "
+        "Gap between these results and published studies is due to dataset size, "
+        "not the ML methodology — the pipeline mirrors the same approach as these papers."
     )
 
     st.markdown("<div class='sh'>⚠️ Limitations & Research Gaps</div>",
@@ -995,16 +988,16 @@ elif "Literature" in PAGE:
     lims = [
         ("🌍","Geographic Bias","#ffa726",
          "Databases are skewed toward European/North American isolates. "
-         "Our model may underperform on South Asian strains — directly relevant for Pakistan."),
+         "The model may underperform on underrepresented geographic strains."),
         ("🧬","Binary Features Only","#ef5350",
          "Gene presence/absence loses fine-grained SNP-level information. "
          "SNP vectors would substantially improve low-level resistance detection."),
         ("📊","Small Dataset (Download Limit)","#42a5f5",
-         "BV-BRC's 1,000-row sp_genes limit reduced our training set significantly. "
+         "BV-BRC's 1,000-row sp_genes limit reduced the training set significantly. "
          "Larger downloads would close the gap with published accuracy figures."),
         ("🏥","No Clinical Validation","#ab47bc",
-         "Performance reported on database samples. Prospective validation at "
-         "Pakistani hospitals (e.g. PIMS, AFPGMI) is required for clinical deployment."),
+         "Performance reported on database samples. Prospective clinical validation "
+         "on independent hospital cohorts is required for clinical deployment."),
     ]
     lc = st.columns(2)
     for i,(icon,title,col,desc) in enumerate(lims):
@@ -1087,8 +1080,7 @@ elif "Prediction" in PAGE:
         <b>🎲 Random from Test Set</b><br>
         <span style='font-size:.82rem;color:#90caf9;'>
         Picks a random real genome from the held-out test set.
-        Great for showing your teacher a live prediction on
-        actual BV-BRC data.
+        Useful for demonstrating a live prediction on actual BV-BRC data.
         </span></div>""", unsafe_allow_html=True)
 
     # ── Helper: write a gene vector into BOTH stores so checkboxes update ────

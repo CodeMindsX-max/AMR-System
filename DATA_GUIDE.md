@@ -36,7 +36,7 @@ Both files must cover **Acinetobacter baumannii** (Taxon ID 470).
 3. Click the **Download** button (↓ icon) → select **CSV**
 4. Save the file as `data/raw/sp_genes.csv`
 
-> **⚠️ Important:** BV-BRC browser limits this download to **1,000 rows**. This is the main reason our model has fewer features than published studies. See [Why is accuracy lower?](README.md#-why-is-our-accuracy-lower-than-literature) in the README.
+> **⚠️ Important:** BV-BRC browser limits this download to **1,000 rows**. This is the main reason the model has fewer features than published studies. See [Why is accuracy lower?](README.md#-why-is-accuracy-lower-than-literature) in the README.
 
 ---
 

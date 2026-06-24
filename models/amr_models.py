@@ -58,7 +58,7 @@ class XGBoostAMRModel(BaseAMRModel):
         "XGBoost handles sparse binary genomic matrices natively. "
         "scale_pos_weight corrects class imbalance. "
         "SHAP TreeExplainer provides fast, exact feature attributions — "
-        "critical for clinical interpretability and viva explanation."
+        "critical for clinical interpretability and interpretable predictions."
     )
 
     def fit(self, X_train, y_train):

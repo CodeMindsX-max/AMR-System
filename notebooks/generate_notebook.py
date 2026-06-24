@@ -29,12 +29,10 @@ cells = []
 # ── TITLE ─────────────────────────────────────────────────────────────────────
 cells.append(md("""\
 # 🧬 Predicting Antibiotic Resistance in *Acinetobacter baumannii*
-### Machine Learning Fundamentals (ALC 354) — Lab Terminal Project
+### Machine Learning Pipeline for Meropenem Resistance Prediction
 ---
 | | |
 |---|---|
-| **Team** | Abdul Raffay Qureshi (SP24-BSI-001) · Andleeb Ijaz (SP24-BSI-010) · Saad Hassnain (SP24-BSI-052) |
-| **Instructor** | Dr. Atif Shakeel · COMSATS University Islamabad |
 | **Problem** | Predict Meropenem resistance (0=Susceptible, 1=Resistant) from whole-genome sequencing |
 | **Dataset** | BV-BRC *A. baumannii* — Gene Presence/Absence Matrix (real genomic data) |
 
@@ -150,7 +148,6 @@ print(ec.metrics_df.to_string())
 cells.append(md("""\
 ---
 ## 📋 Phase 1 — Problem Definition & Literature Review
-*(Assignment 2 / Proposal Phase — submitted 12 April 2026)*
 
 ### 1.1 Problem Statement
 **Antimicrobial Resistance (AMR)** is a WHO-declared global health emergency.
@@ -159,7 +156,7 @@ cells.append(md("""\
 Traditional Antibiotic Susceptibility Testing (AST) takes **24–72 hours** → clinicians are
 forced to prescribe broad-spectrum antibiotics empirically → accelerates resistance.
 
-**Our goal:** Use ML on Whole-Genome Sequencing data to predict Meropenem resistance in
+**Goal:** Use ML on Whole-Genome Sequencing data to predict Meropenem resistance in
 near real-time directly from gene presence/absence profiles.
 
 **Classification task:** Binary — 1 = Resistant, 0 = Susceptible
@@ -172,7 +169,7 @@ near real-time directly from gene presence/absence profiles.
 | [2] | Wang et al. 2023 | 1,784 PATRIC | Gene P/A + SNPs | LASSO | 0.970 | 20 core genomic resistance signatures |
 | [4] | Gao et al. 2024 | 2,195 clinical | Genomic + Clinical | SHAP-GBM | ~0.950 | blaOXA mutations > clinical metadata |
 
-**Research Gap We Address:** Limited South Asian genomic data; binary gene features vs SNP-level;
+**Research Gap Addressed:** Limited geographic diversity in public genomic data; binary gene features vs SNP-level;
 1,000-row BV-BRC download constraint reducing feature coverage.
 """))
 
@@ -286,7 +283,7 @@ pca_check = PCA().fit(X_all)
 cumvar = np.cumsum(pca_check.explained_variance_ratio_)
 n80 = int(np.searchsorted(cumvar, 0.80)) + 1
 print(f"{n80} components explain ≥80% of variance")
-print(f"We use all {len(features)} features to preserve rare resistance signals.")
+print(f"Using all {len(features)} features to preserve rare resistance signals.")
 """))
 
 cells.append(md("### 2.8 Chi-Squared Feature Ranking"))
@@ -485,7 +482,7 @@ our_auc = ec.metrics_df.loc["XGBoost", "AUC-ROC"]
 our_acc = ec.metrics_df.loc["XGBoost", "Accuracy"]
 our_sen = ec.metrics_df.loc["XGBoost", "Sensitivity"]
 
-studies = ["Gao 2024 [1]", "Wang 2023 [2]", "Gao 2024 [4]", "This Project"]
+studies = ["Gao 2024 [1]", "Wang 2023 [2]", "Gao 2024 [4]", "This Implementation"]
 aucs    = [0.9800, 0.9700, 0.9500, our_auc]
 accs    = [0.9836, 0.9400, 0.9200, our_acc]
 sens    = [0.9700, 0.9500, 0.9100, our_sen]
@@ -515,13 +512,13 @@ for metric, vals, col in [
         marker=dict(size=11, color=col, line=dict(width=2, color="#0d1117")),
     ))
 fig.add_vrect(x0=2.5, x1=3.5, fillcolor="#ef5350", opacity=0.08,
-               annotation_text="← Our Work")
+               annotation_text="← This implementation")
 fig.update_layout(**DARK_LAYOUT, height=430, yaxis_range=[0.50, 1.03],
-                   title="Literature Benchmark — Our Results vs Published Studies")
+                   title="Literature Benchmark — Results vs Published Studies")
 fig.show()
 
 print()
-print("=== Why Our Accuracy is Lower — Honest Explanation ===")
+print("=== Why Accuracy May Be Lower — Explanation ===")
 print(f"Gene features retained : {len(features)}  (vs 50-200+ in published studies)")
 print(f"Root cause             : BV-BRC sp_genes.csv 1,000-row download limit")
 print(f"Genome overlap         : Limited coverage reduces feature matrix size")
@@ -553,7 +550,7 @@ cells.append(md("""\
 1. Geographic bias — databases skewed toward European/North American isolates
 2. Binary gene features only — SNP-level analysis would improve sensitivity
 3. Only 12 genes retained — more sp_genes data would dramatically improve accuracy
-4. Prospective clinical validation at Pakistani hospitals required
+4. Prospective clinical validation on independent hospital cohorts required
 
 ### References
 > [1] Gao et al., "ML for rapid AMR prediction of *A. baumannii*," *Frontiers in Microbiology*, 2024  

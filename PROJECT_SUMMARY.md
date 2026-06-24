@@ -1,8 +1,6 @@
 # 🧬 AMR Prediction Project - Complete Summary
 
 **Project Title:** Predicting Antibiotic Resistance in *Acinetobacter baumannii* using Machine Learning  
-**Institution:** COMSATS University Islamabad  
-**Course:** ALC 354 - Machine Learning Fundamentals  
 **Organism:** *Acinetobacter baumannii* (NCBI Taxon ID: 470)  
 **Target Antibiotic:** Meropenem  
 **Real-World Problem:** Clinical AMR (Antimicrobial Resistance) Prediction for CRAB strains (Carbapenem-Resistant A. baumannii)
@@ -673,14 +671,6 @@ TOTAL: ~25 seconds from start to finish
 | **Clinical Impact** | Reduces AST turnaround from 24-72 hours to milliseconds |
 
 ---
-
-## 📞 CONTACT & REFERENCES
-
-**Project Lead:** COMSATS University Islamabad, Bioinformatics (BSI) Program  
-**Course:** ALC 354 - Machine Learning Fundamentals  
-**Data Source:** BV-BRC (https://www.bv-brc.org) — Taxon 470 (A. baumannii)  
-**Dashboard Command:** `python main.py streamlit`  
-**Pipeline Command:** `python main.py pipeline`  
 
 ---
 

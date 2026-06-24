@@ -1,0 +1,145 @@
+Project status: working
+I ran the full pipeline on your machine. After installing missing packages (xgboost, shap, imbalanced-learn, nbformat), it completed successfully in ~45 seconds.
+
+Important notes from the test run:
+
+Your system uses py (Python 3.14.2), not python — python alone is not found in PATH.
+data/raw/ is empty, so the project used the synthetic demo dataset (2,500 samples, 48 genes).
+With synthetic data, models hit ~100% accuracy — that’s expected for demo data, not real clinical performance.
+With real BV-BRC data, expect ~55–58% accuracy (as documented in the README).
+How to run the project
+Step 1 — Open terminal in project folder
+cd "d:\Python Programs\AMR Project\AMR Project\ML_AMR_Project"
+Step 2 — Install dependencies (one time)
+py -m pip install -r requirements.txt
+Verify:
+
+py -c "import xgboost, shap, streamlit, sklearn; print('OK')"
+Step 3 — Choose how to run
+What you want	Command
+Full pipeline (train + evaluate + SHAP in terminal)
+py main.py pipeline
+Web dashboard (best for exploring)
+py main.py streamlit or py -m streamlit run streamlit_app/app.py
+Download real BV-BRC data
+py main.py download
+Generate Jupyter notebook
+py notebooks/generate_notebook.py
+Step 4 — Open the dashboard
+After py main.py streamlit, open:
+
+http://localhost:8501
+
+Optional: use real data (recommended for presentation)
+Create folder: data\raw\
+Either run py main.py download, or manually download from BV-BRC:
+amr_phenotype.csv — Meropenem resistance labels
+sp_genes.csv — AMR genes
+Re-run: py main.py pipeline
+See DATA_GUIDE.md for detailed download steps.
+
+What is this project? (simple explanation)
+Problem: Acinetobacter baumannii is a dangerous hospital bacteria. Testing if it resists Meropenem (a strong antibiotic) takes 24–72 hours in a lab.
+
+Solution: Use machine learning to predict resistance from DNA/gene data in seconds.
+
+Input: Which AMR genes are present in a bacterial genome (1 = present, 0 = absent).
+
+Output: Resistant (1) or Susceptible (0), plus SHAP explanations showing which genes drove the prediction.
+
+How the project flows (big picture)
+BV-BRC CSV files OR synthetic data
+DataController
+Clean MIC values + build gene matrix
+Train/Test split + SMOTE balancing
+TrainController - 4 ML models
+EvalController - metrics + ROC curves
+SHAPAnalyser - explain predictions
+CLI / Streamlit / Jupyter
+The 4 phases in main.py pipeline
+Load & preprocess — controllers/data_controller.py
+Train models — controllers/train_controller.py + models/amr_models.py
+Evaluate — controllers/eval_controller.py
+Explain with SHAP — views/shap_views.py
+Which file does what?
+File	Role
+main.py
+Entry point — runs everything
+config.py
+Paths, hyperparameters, BV-BRC URLs
+controllers/data_controller.py
+Load CSVs, parse MIC, build features, SMOTE
+controllers/train_controller.py
+Train 4 models + 5-fold CV
+controllers/eval_controller.py
+Accuracy, AUC, F1, confusion matrix
+models/amr_models.py
+XGBoost, Random Forest, Gradient Boosting, Logistic Regression
+views/plots.py
+Charts (ROC, heatmaps, PCA, etc.)
+views/shap_views.py
+Gene-level explainability
+streamlit_app/app.py
+Interactive 8-page web UI
+Architecture: MVC — logic in controllers/, ML in models/, charts in views/, UI in streamlit_app/.
+
+Best way to understand the project (recommended order)
+1. Run the CLI pipeline first
+py main.py pipeline
+Watch the terminal output — it prints each phase, top genes, metrics, and SHAP results.
+
+2. Open the Streamlit dashboard
+py main.py streamlit
+Use the sidebar and go through pages in order:
+
+Overview — what the project does
+Dataset Explorer — see the data
+Preprocessing — how features are built
+Model Training — cross-validation results
+Evaluation — ROC curves, metrics table
+SHAP — which genes matter most
+Literature Comparison — vs published papers
+Live Prediction — try your own gene combinations
+3. Read main.py (only ~60 lines)
+This is the “story” of the project — it calls each controller in sequence.
+
+4. Trace one path: data → model → prediction
+Data path (data_controller.py):
+
+Load 2 CSVs → normalize column names → parse MIC (>16, <=2) → label Resistant/Susceptible → pivot genes into 0/1 matrix → split 80/20 → SMOTE on training only
+Model path (amr_models.py):
+
+4 classifiers trained on balanced data
+XGBoost is primary; uses scale_pos_weight for class imbalance
+Explainability (shap_views.py):
+
+SHAP answers: “Why did the model predict Resistant for this genome?”
+5. Use the Jupyter notebook (for step-by-step exploration)
+py notebooks/generate_notebook.py
+Then open notebooks/AMR_ML_Project.ipynb in VS Code and run cells one by one.
+
+Quick mental model
+Think of it as a factory line:
+
+Raw genomic CSVs
+    → Clean & label (Resistant/Susceptible)
+    → Gene presence matrix (rows = bacteria, columns = genes)
+    → Train 4 ML models
+    → Test on held-out 20%
+    → Explain with SHAP
+    → Show in dashboard
+Clinical idea: If genes like blaOXA-23, blaNDM-1, adeB are present, the bacteria is more likely to resist Meropenem — the model learns these patterns from data.
+
+Summary
+Question	Answer
+Is it working?
+Yes — pipeline runs end-to-end
+Command to use?
+py not python on your PC
+Current data?
+Synthetic (no files in data/raw/)
+Best way to explore?
+py main.py streamlit → browse all 8 pages
+Best way to learn code?
+main.py → then data_controller.py → then amr_models.py
+If you want, I can walk you through one file at a time (e.g. data_controller.py line by line) or help you set up real BV-BRC data so you get the actual ~58% AUC results from the README.
